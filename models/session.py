@@ -2,6 +2,8 @@ from datetime import datetime
 from . import db
 
 class Session(db.Model):
+    __tablename__ = 'sessions'
+    
     id = db.Column(db.Integer, primary_key=True)
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaign.id'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
@@ -9,6 +11,10 @@ class Session(db.Model):
     displayed_fields = db.Column(db.JSON)  # Campos que serão exibidos para cada personagem
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relacionamentos
+    campaign = db.relationship('Campaign', backref='sessions')
+    combats = db.relationship('Combat', backref='session', lazy=True, cascade='all, delete-orphan')
 
     def __init__(self, campaign_id, name, displayed_fields=None):
         self.campaign_id = campaign_id

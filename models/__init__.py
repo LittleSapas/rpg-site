@@ -10,9 +10,9 @@ from .campaign import Campaign
 from .system_info import SystemInfo
 from .character import Character
 from .character_log import CharacterLog
-from .combat import Combat, Initiative
 from .enemy import Enemy
 from .session import Session
+from .combat import Combat, Initiative
 from .template import CharacterTemplate
 
 def init_db(app):
@@ -32,10 +32,10 @@ __all__ = [
     'SystemInfo',
     'Character',
     'CharacterLog',
-    'Combat',
-    'Initiative',
     'Enemy',
     'Session',
+    'Combat',
+    'Initiative',
     'CharacterTemplate'
 ]
 

@@ -12,7 +12,7 @@ class Combat(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relacionamentos
-    session = db.relationship('Session', backref='combats')
+    session = db.relationship('Session')
     initiatives = db.relationship('Initiative', backref='combat', cascade='all, delete-orphan')
 
 class Initiative(db.Model):
