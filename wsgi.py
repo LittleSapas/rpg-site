@@ -14,9 +14,11 @@ if path not in sys.path:
     sys.path.append(path)
 
 # Importar a aplicação
-from app import app as application
-app = application  # Expor a aplicação como 'app' também
+from app import app
 
 # Configurar monitoramento
 from monitoring import setup_monitoring
-setup_monitoring(app) 
+setup_monitoring(app)
+
+# Expor a aplicação para o Gunicorn
+application = app 
