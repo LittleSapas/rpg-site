@@ -11,4 +11,5 @@ if path not in sys.path:
     sys.path.append(path)
 
 # Importar a aplicação
-from app import app as application 
+from app import app as application
+app = application  # Expor a aplicação como 'app' também 
