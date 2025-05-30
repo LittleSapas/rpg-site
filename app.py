@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from config import Config
-from models import init_db, db
+from models import init_db, db, User
 from monitoring import setup_monitoring
 
 load_dotenv()
@@ -22,13 +22,6 @@ login_manager.login_view = 'auth.login'
 setup_monitoring(app)
 
 # Modelos
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    discord_id = db.Column(db.String(120), unique=True, nullable=False)
-    username = db.Column(db.String(120), nullable=False)
-    avatar = db.Column(db.String(200))
-    campaigns = db.relationship('Campaign', backref='owner', lazy=True)
-
 class Campaign(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
