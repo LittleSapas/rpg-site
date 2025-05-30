@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 from datetime import datetime
 import psutil
 import json
-from flask import request
+from flask import request, current_app
 
 def setup_logging(app):
     """Configura o sistema de logging da aplicação."""
@@ -32,7 +32,7 @@ def setup_logging(app):
 
 def log_request():
     """Log de requisições HTTP."""
-    app.logger.info(
+    current_app.logger.info(
         f'Request: {request.method} {request.url} - '
         f'IP: {request.remote_addr} - '
         f'User Agent: {request.user_agent}'
@@ -54,15 +54,15 @@ def monitor_system():
     
     # Alertar se recursos estiverem críticos
     if stats['cpu_percent'] > 90:
-        app.logger.warning('CPU usage critical: %d%%', stats['cpu_percent'])
+        current_app.logger.warning('CPU usage critical: %d%%', stats['cpu_percent'])
     if stats['memory_percent'] > 90:
-        app.logger.warning('Memory usage critical: %d%%', stats['memory_percent'])
+        current_app.logger.warning('Memory usage critical: %d%%', stats['memory_percent'])
     if stats['disk_percent'] > 90:
-        app.logger.warning('Disk usage critical: %d%%', stats['disk_percent'])
+        current_app.logger.warning('Disk usage critical: %d%%', stats['disk_percent'])
 
 def log_error(error):
     """Log de erros detalhado."""
-    app.logger.error(
+    current_app.logger.error(
         'Error: %s\nTraceback: %s',
         str(error),
         error.__traceback__

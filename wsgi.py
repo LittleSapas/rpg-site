@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch()
+
 import sys
 import os
 from dotenv import load_dotenv
@@ -12,4 +15,8 @@ if path not in sys.path:
 
 # Importar a aplicação
 from app import app as application
-app = application  # Expor a aplicação como 'app' também 
+app = application  # Expor a aplicação como 'app' também
+
+# Configurar monitoramento
+from monitoring import setup_monitoring
+setup_monitoring(app) 
