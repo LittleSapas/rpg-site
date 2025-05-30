@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, emit
 from datetime import datetime
@@ -10,7 +10,9 @@ from monitoring import setup_monitoring
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, 
+           static_folder='static',
+           static_url_path='/static')
 app.config.from_object(Config)
 
 socketio = SocketIO(app)
@@ -51,6 +53,11 @@ app.register_blueprint(notes)
 # Criação da pasta de uploads se não existir
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# Rota de fallback para arquivos estáticos
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(app.static_folder, filename)
 
 # Eventos do Socket.IO
 @socketio.on('connect')
