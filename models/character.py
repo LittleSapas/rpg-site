@@ -2,6 +2,8 @@ from . import db
 from datetime import datetime
 
 class Character(db.Model):
+    __tablename__ = 'characters'
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaign.id'), nullable=False)
@@ -12,7 +14,10 @@ class Character(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Relacionamentos
+    campaign = db.relationship('Campaign', backref='characters')
+    user = db.relationship('User', backref='characters')
     logs = db.relationship('CharacterLog', backref='character', lazy=True, cascade='all, delete-orphan')
+    initiatives = db.relationship('Initiative', backref='character', lazy=True)
     
     def __repr__(self):
         return f'<Character {self.name}>'
