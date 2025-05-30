@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, emit
 from datetime import datetime
 import os
 from dotenv import load_dotenv
 from config import Config
-from models import init_db
+from models import init_db, db
 from monitoring import setup_monitoring
 
 load_dotenv()
@@ -14,7 +13,6 @@ load_dotenv()
 app = Flask(__name__)
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
 socketio = SocketIO(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
