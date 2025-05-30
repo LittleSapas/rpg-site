@@ -12,7 +12,6 @@ from .character import Character
 from .character_log import CharacterLog
 from .combat import Combat, Initiative
 from .enemy import Enemy
-from .note import Note
 from .session import Session
 from .template import CharacterTemplate
 
@@ -36,7 +35,6 @@ __all__ = [
     'Combat',
     'Initiative',
     'Enemy',
-    'Note',
     'Session',
     'CharacterTemplate'
 ]
