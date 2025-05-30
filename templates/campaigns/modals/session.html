@@ -1,0 +1,153 @@
+<!-- Modal de Sessão -->
+<div class="modal fade" id="sessionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Iniciar Sessão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sessionForm">
+                    <div class="mb-3">
+                        <label for="sessionName" class="form-label">Nome da Sessão</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="sessionName" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Campos a Exibir</label>
+                        <div id="displayFields" class="border border-secondary rounded p-3">
+                            <!-- Campos serão carregados dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Participantes</label>
+                        <div id="participants" class="border border-secondary rounded p-3">
+                            <!-- Participantes serão carregados dinamicamente -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="startSession()">Iniciar Sessão</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal da Sessão em Andamento -->
+<div class="modal fade" id="activeSessionModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="sessionTitle">Sessão em Andamento</h5>
+                <button type="button" class="btn-close btn-close-white" onclick="confirmEndSession()"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="container-fluid h-100">
+                    <div class="row h-100">
+                        <!-- Área dos Personagens -->
+                        <div class="col-md-9 h-100 overflow-auto">
+                            <div class="row g-4 p-4" id="sessionCharacters">
+                                <!-- Cards dos personagens serão carregados dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <!-- Barra Lateral -->
+                        <div class="col-md-3 h-100 border-start border-secondary">
+                            <div class="d-flex flex-column h-100">
+                                <!-- Abas -->
+                                <ul class="nav nav-tabs nav-fill" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active bg-dark text-light border-secondary" 
+                                                data-bs-toggle="tab" data-bs-target="#notesTab" type="button">
+                                            <i class="fas fa-sticky-note"></i>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link bg-dark text-light border-secondary" 
+                                                data-bs-toggle="tab" data-bs-target="#diceTab" type="button">
+                                            <i class="fas fa-dice"></i>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link bg-dark text-light border-secondary" 
+                                                data-bs-toggle="tab" data-bs-target="#enemiesTab" type="button">
+                                            <i class="fas fa-skull"></i>
+                                        </button>
+                                    </li>
+                                </ul>
+                                
+                                <!-- Conteúdo das Abas -->
+                                <div class="tab-content flex-grow-1 overflow-auto">
+                                    <!-- Aba de Anotações -->
+                                    <div class="tab-pane fade show active p-3" id="notesTab">
+                                        <div class="d-flex flex-column h-100">
+                                            <div class="mb-3">
+                                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                                       placeholder="Nova anotação rápida...">
+                                            </div>
+                                            <div class="flex-grow-1 overflow-auto" id="sessionNotes">
+                                                <!-- Anotações serão carregadas dinamicamente -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Aba de Dados -->
+                                    <div class="tab-pane fade p-3" id="diceTab">
+                                        <div class="mb-3">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(4)">d4</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(6)">d6</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(8)">d8</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(10)">d10</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(12)">d12</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(20)">d20</button>
+                                                <button class="btn btn-outline-secondary" onclick="rollDice(100)">d100</button>
+                                            </div>
+                                        </div>
+                                        <div id="diceLog" class="overflow-auto">
+                                            <!-- Resultados dos dados serão exibidos aqui -->
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Aba de Inimigos -->
+                                    <div class="tab-pane fade p-3" id="enemiesTab">
+                                        <div class="mb-3">
+                                            <button class="btn btn-outline-secondary w-100" onclick="addEnemy()">
+                                                <i class="fas fa-plus me-2"></i>Adicionar Inimigo
+                                            </button>
+                                        </div>
+                                        <div id="sessionEnemies">
+                                            <!-- Inimigos serão carregados dinamicamente -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Encerrar Sessão -->
+<div class="modal fade" id="endSessionConfirmModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Encerrar Sessão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja encerrar a sessão? Todas as informações não salvas serão perdidas.</p>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="endSession()">Encerrar Sessão</button>
+            </div>
+        </div>
+    </div>
+</div> 

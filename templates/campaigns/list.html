@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}RPG Manager - Minhas Campanhas{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-dice-d20 me-2"></i>Minhas Campanhas</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newCampaignModal">
+            <i class="fas fa-plus me-2"></i>Nova Campanha
+        </button>
+    </div>
+
+    <!-- Lista de Servidores -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fab fa-discord me-2"></i>Servidores do Discord</h5>
+                </div>
+                <div class="card-body">
+                    <div id="discord-servers" class="row g-3">
+                        <!-- Servidores serão carregados via JavaScript -->
+                        <div class="col-12 text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Carregando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Campanhas -->
+    <div class="row g-4" id="campaigns-list">
+        {% for campaign in campaigns %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ campaign.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fab fa-discord me-1"></i>{{ campaign.server_name }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary me-1">{{ campaign.characters|length }} Personagens</span>
+                            <span class="badge bg-info">{{ campaign.system_info|length }} Sistemas</span>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-light" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('campaigns.view_campaign', campaign_id=campaign.id) }}">
+                                        <i class="fas fa-eye me-2"></i>Ver Detalhes
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('campaigns.edit_campaign', campaign_id=campaign.id) }}">
+                                        <i class="fas fa-edit me-2"></i>Editar
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <button class="dropdown-item text-danger" onclick="deleteCampaign({{ campaign.id }})">
+                                        <i class="fas fa-trash me-2"></i>Excluir
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-dice-d20 fa-3x mb-3 text-muted"></i>
+                <h3>Nenhuma campanha encontrada</h3>
+                <p class="text-muted">Clique em "Nova Campanha" para começar!</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal Nova Campanha -->
+<div class="modal fade" id="newCampaignModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Nova Campanha</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newCampaignForm">
+                    <div class="mb-3">
+                        <label for="campaignName" class="form-label">Nome da Campanha</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="campaignName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="serverSelect" class="form-label">Servidor do Discord</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="serverSelect" required>
+                            <option value="">Selecione um servidor...</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="createCampaign()">Criar Campanha</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Carregar servidores do Discord
+async function loadDiscordServers() {
+    try {
+        const response = await fetch('/api/discord/servers');
+        const servers = await response.json();
+        
+        const serversContainer = document.getElementById('discord-servers');
+        const serverSelect = document.getElementById('serverSelect');
+        
+        serversContainer.innerHTML = servers.map(server => `
+            <div class="col-md-6 col-lg-4">
+                <div class="d-flex align-items-center p-2 border border-secondary rounded">
+                    <img src="${server.icon_url || '/static/img/default_server.png'}" 
+                         alt="${server.name}" 
+                         class="rounded-circle me-2"
+                         width="32" height="32">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${server.name}</h6>
+                        <small class="text-muted">${server.member_count} membros</small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        serverSelect.innerHTML = `
+            <option value="">Selecione um servidor...</option>
+            ${servers.map(server => `
+                <option value="${server.id}">${server.name}</option>
+            `).join('')}
+        `;
+    } catch (error) {
+        console.error('Erro ao carregar servidores:', error);
+    }
+}
+
+// Criar nova campanha
+async function createCampaign() {
+    const name = document.getElementById('campaignName').value;
+    const serverId = document.getElementById('serverSelect').value;
+    
+    if (!name || !serverId) {
+        alert('Por favor, preencha todos os campos.');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/campaigns', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, server_id: serverId })
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.message || 'Erro ao criar campanha.');
+        }
+    } catch (error) {
+        console.error('Erro ao criar campanha:', error);
+        alert('Erro ao criar campanha. Tente novamente.');
+    }
+}
+
+// Excluir campanha
+async function deleteCampaign(campaignId) {
+    if (!confirm('Tem certeza que deseja excluir esta campanha? Esta ação não pode ser desfeita.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/campaigns/${campaignId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const error = await response.json();
+            alert(error.message || 'Erro ao excluir campanha.');
+        }
+    } catch (error) {
+        console.error('Erro ao excluir campanha:', error);
+        alert('Erro ao excluir campanha. Tente novamente.');
+    }
+}
+
+// Carregar servidores quando a página carregar
+document.addEventListener('DOMContentLoaded', loadDiscordServers);
+</script>
+{% endblock %} 

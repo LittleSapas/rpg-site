@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.name }} - RPG Manager{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Cabeçalho da Campanha -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark border-secondary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="mb-2">{{ campaign.name }}</h1>
+                            <p class="text-muted mb-0">
+                                <i class="fab fa-discord me-2"></i>{{ campaign.server_name }}
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sessionModal">
+                                <i class="fas fa-video me-2"></i>Iniciar Sessão
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ url_for('campaigns.edit_campaign', campaign_id=campaign.id) }}">
+                                            <i class="fas fa-edit me-2"></i>Editar Campanha
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#membersModal">
+                                            <i class="fas fa-users me-2"></i>Gerenciar Membros
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <button class="dropdown-item text-danger" onclick="deleteCampaign({{ campaign.id }})">
+                                            <i class="fas fa-trash me-2"></i>Excluir Campanha
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="row">
+        <!-- Menu Lateral -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary active" 
+                        data-bs-toggle="list" href="#overview">
+                    <i class="fas fa-home me-2"></i>Visão Geral
+                </button>
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary" 
+                        data-bs-toggle="list" href="#characters">
+                    <i class="fas fa-users me-2"></i>Personagens
+                </button>
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary" 
+                        data-bs-toggle="list" href="#system">
+                    <i class="fas fa-book me-2"></i>Sistema
+                </button>
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary" 
+                        data-bs-toggle="list" href="#notes">
+                    <i class="fas fa-sticky-note me-2"></i>Anotações
+                </button>
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary" 
+                        data-bs-toggle="list" href="#enemies">
+                    <i class="fas fa-skull me-2"></i>Inimigos
+                </button>
+                <button class="list-group-item list-group-item-action bg-dark text-light border-secondary" 
+                        data-bs-toggle="list" href="#logs">
+                    <i class="fas fa-history me-2"></i>Logs
+                </button>
+            </div>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Visão Geral -->
+                <div class="tab-pane fade show active" id="overview">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-users me-2"></i>Personagens</h5>
+                                    <p class="card-text">{{ campaign.characters|length }} personagens ativos</p>
+                                    <a href="#characters" class="btn btn-primary" data-bs-toggle="list">Ver Personagens</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-book me-2"></i>Sistema</h5>
+                                    <p class="card-text">{{ campaign.system_info|length }} seções de regras</p>
+                                    <a href="#system" class="btn btn-primary" data-bs-toggle="list">Ver Sistema</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-sticky-note me-2"></i>Anotações</h5>
+                                    <p class="card-text">{{ campaign.notes|length }} anotações</p>
+                                    <a href="#notes" class="btn btn-primary" data-bs-toggle="list">Ver Anotações</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark border-secondary h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-skull me-2"></i>Inimigos</h5>
+                                    <p class="card-text">{{ campaign.enemies|length }} inimigos cadastrados</p>
+                                    <a href="#enemies" class="btn btn-primary" data-bs-toggle="list">Ver Inimigos</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personagens -->
+                <div class="tab-pane fade" id="characters">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Personagens</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newCharacterModal">
+                            <i class="fas fa-plus me-2"></i>Novo Personagem
+                        </button>
+                    </div>
+                    <div class="row g-4" id="characters-list">
+                        <!-- Lista de personagens será carregada via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Sistema -->
+                <div class="tab-pane fade" id="system">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Sistema</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newSystemModal">
+                            <i class="fas fa-plus me-2"></i>Nova Seção
+                        </button>
+                    </div>
+                    <div id="system-sections">
+                        <!-- Seções do sistema serão carregadas via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Anotações -->
+                <div class="tab-pane fade" id="notes">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Anotações</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newNoteModal">
+                            <i class="fas fa-plus me-2"></i>Nova Anotação
+                        </button>
+                    </div>
+                    <div class="row g-4" id="notes-list">
+                        <!-- Lista de anotações será carregada via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Inimigos -->
+                <div class="tab-pane fade" id="enemies">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Inimigos</h2>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newEnemyModal">
+                            <i class="fas fa-plus me-2"></i>Novo Inimigo
+                        </button>
+                    </div>
+                    <div class="row g-4" id="enemies-list">
+                        <!-- Lista de inimigos será carregada via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Logs -->
+                <div class="tab-pane fade" id="logs">
+                    <h2 class="mb-4">Logs de Alterações</h2>
+                    <div class="list-group" id="logs-list">
+                        <!-- Lista de logs será carregada via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modais -->
+{% include 'campaigns/modals/session.html' %}
+{% include 'campaigns/modals/members.html' %}
+{% include 'campaigns/modals/character.html' %}
+{% include 'campaigns/modals/system.html' %}
+{% include 'campaigns/modals/note.html' %}
+{% include 'campaigns/modals/enemy.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/campaign.js') }}"></script>
+{% endblock %} 

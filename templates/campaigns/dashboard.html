@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block title %}{{ campaign.name }} - RPG Manager{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" href="#overview" data-bs-toggle="tab">
+                            <i class="fas fa-home me-2"></i>Visão Geral
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#characters" data-bs-toggle="tab">
+                            <i class="fas fa-users me-2"></i>Personagens
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#system" data-bs-toggle="tab">
+                            <i class="fas fa-book me-2"></i>Sistema
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#session" data-bs-toggle="tab">
+                            <i class="fas fa-video me-2"></i>Sessão Virtual
+                        </a>
+                    </li>
+                    {% if campaign.owner_id == current_user.id %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#settings" data-bs-toggle="tab">
+                            <i class="fas fa-cog me-2"></i>Configurações
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="tab-content" id="campaignContent">
+                <!-- Visão Geral -->
+                <div class="tab-pane fade show active" id="overview">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1>{{ campaign.name }}</h1>
+                        {% if campaign.owner_id == current_user.id %}
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <button type="button" class="btn btn-rpg" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                <i class="fas fa-user-plus me-2"></i>Convidar Jogadores
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Estatísticas -->
+                        <div class="col-md-4">
+                            <div class="rpg-card p-4">
+                                <h4>Estatísticas</h4>
+                                <div class="mt-3">
+                                    <p><i class="fas fa-users me-2"></i>{{ characters|length }} Personagens</p>
+                                    <p><i class="fas fa-book me-2"></i>{{ system_info|length }} Seções do Sistema</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Últimas Atividades -->
+                        <div class="col-md-8">
+                            <div class="rpg-card p-4">
+                                <h4>Últimas Atividades</h4>
+                                <div id="activity-log" class="mt-3">
+                                    <!-- Logs serão carregados via JavaScript -->
+                                    <div class="loading-spinner mx-auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personagens -->
+                <div class="tab-pane fade" id="characters">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h2>Personagens</h2>
+                        {% if campaign.owner_id == current_user.id %}
+                        <button class="btn btn-rpg" data-bs-toggle="modal" data-bs-target="#templateModal">
+                            <i class="fas fa-edit me-2"></i>Editar Template
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-4" id="characters-grid">
+                        {% for character in characters %}
+                        <div class="col-md-6 col-lg-4">
+                            <div class="character-sheet">
+                                <img src="{{ character.image_url or url_for('static', filename='img/default-character.png') }}"
+                                     alt="{{ character.name }}" class="character-image w-100">
+                                <h3>{{ character.name }}</h3>
+                                <div class="character-data">
+                                    <!-- Dados dinâmicos do personagem -->
+                                </div>
+                                <div class="mt-3">
+                                    <button class="btn btn-rpg w-100" onclick="viewCharacter({{ character.id }})">
+                                        Ver Detalhes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Sistema -->
+                <div class="tab-pane fade" id="system">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h2>Sistema</h2>
+                        {% if campaign.owner_id == current_user.id %}
+                        <button class="btn btn-rpg" data-bs-toggle="modal" data-bs-target="#newSystemModal">
+                            <i class="fas fa-plus me-2"></i>Nova Seção
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-4">
+                        {% for info in system_info %}
+                        <div class="col-12">
+                            <div class="system-section">
+                                <h3>{{ info.title }}</h3>
+                                <div class="mt-3">{{ info.content|safe }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Sessão Virtual -->
+                <div class="tab-pane fade" id="session">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h2>Sessão Virtual</h2>
+                        <button class="btn btn-rpg" onclick="toggleSession()">
+                            <i class="fas fa-play me-2"></i>Iniciar Sessão
+                        </button>
+                    </div>
+
+                    <div class="session-area" id="virtual-session">
+                        <div class="row g-4" id="session-players">
+                            <!-- Jogadores serão carregados dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações -->
+                {% if campaign.owner_id == current_user.id %}
+                <div class="tab-pane fade" id="settings">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h2>Configurações</h2>
+                    </div>
+
+                    <div class="rpg-card p-4">
+                        <h4>Configurações da Campanha</h4>
+                        <form id="campaign-settings" class="mt-4">
+                            <div class="mb-3">
+                                <label for="campaignName" class="form-label">Nome da Campanha</label>
+                                <input type="text" class="form-control" id="campaignName" value="{{ campaign.name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="campaignDescription" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="campaignDescription" rows="3">{{ campaign.description }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-rpg">Salvar Alterações</button>
+                        </form>
+
+                        <hr class="my-4">
+
+                        <h4>Gerenciar Jogadores</h4>
+                        <div class="mt-4" id="players-list">
+                            <!-- Lista de jogadores será carregada dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modais -->
+{% if campaign.owner_id == current_user.id %}
+<!-- Modal de Template de Personagem -->
+<div class="modal fade" id="templateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Template de Personagem</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="template-builder">
+                    <!-- Interface de construção do template -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-rpg" onclick="saveTemplate()">Salvar Template</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Nova Seção do Sistema -->
+<div class="modal fade" id="newSystemModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Seção do Sistema</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="system-section-form">
+                    <div class="mb-3">
+                        <label for="sectionTitle" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="sectionTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sectionContent" class="form-label">Conteúdo</label>
+                        <textarea class="form-control" id="sectionContent" rows="10" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-rpg" onclick="saveSystemSection()">Salvar Seção</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Convite -->
+<div class="modal fade" id="inviteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Convidar Jogadores</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inviteLink" class="form-label">Link de Convite</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="inviteLink" readonly>
+                        <button class="btn btn-rpg" onclick="copyInviteLink()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar dados da campanha
+    currentCampaign = {{ campaign.id }};
+    
+    // Carregar logs de atividade
+    loadActivityLogs();
+    
+    // Se estiver na aba de sessão, inicializar
+    if (window.location.hash === '#session') {
+        initializeSession('{{ campaign.id }}');
+    }
+    
+    // Inicializar dados dos personagens
+    loadCharacterData();
+});
+
+// Funções específicas da campanha serão implementadas no arquivo campaign.js
+</script>
+{% endblock %} 

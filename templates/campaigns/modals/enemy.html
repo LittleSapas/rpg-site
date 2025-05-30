@@ -1,0 +1,176 @@
+<!-- Modal de Inimigo -->
+<div class="modal fade" id="enemyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="enemyModalTitle">Novo Inimigo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="enemyForm">
+                    <input type="hidden" id="enemyId">
+                    
+                    <!-- Informações Básicas -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="text-center mb-3">
+                                <img id="enemyImage" src="/static/img/default_enemy.png" 
+                                     alt="Imagem do Inimigo" class="img-fluid rounded mb-2" 
+                                     style="max-height: 200px;">
+                                <div class="d-grid">
+                                    <label class="btn btn-outline-primary">
+                                        <i class="fas fa-upload me-2"></i>Alterar Imagem
+                                        <input type="file" id="enemyImageUpload" accept="image/*" class="d-none">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="enemyName" class="form-label">Nome</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="enemyName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="enemyDescription" class="form-label">Descrição</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" 
+                                          id="enemyDescription" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estatísticas -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Estatísticas</h6>
+                        <div class="row g-3" id="enemyStats">
+                            <!-- Campos de estatísticas serão carregados dinamicamente -->
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary mt-3" onclick="addStatField()">
+                            <i class="fas fa-plus me-2"></i>Adicionar Estatística
+                        </button>
+                    </div>
+
+                    <!-- Habilidades -->
+                    <div class="mb-4">
+                        <h6 class="mb-3">Habilidades</h6>
+                        <div id="enemyAbilities">
+                            <!-- Habilidades serão carregadas dinamicamente -->
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" onclick="addAbility()">
+                            <i class="fas fa-plus me-2"></i>Adicionar Habilidade
+                        </button>
+                    </div>
+
+                    <!-- Notas -->
+                    <div class="mb-3">
+                        <label for="enemyNotes" class="form-label">Notas Adicionais</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" 
+                                  id="enemyNotes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveEnemy()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="enemyViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="enemyViewTitle"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <img id="enemyViewImage" src="" alt="" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-8">
+                        <p id="enemyViewDescription" class="text-muted"></p>
+                        
+                        <div class="mb-4">
+                            <h6>Estatísticas</h6>
+                            <div class="row g-2" id="enemyViewStats">
+                                <!-- Estatísticas serão carregadas dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Habilidades</h6>
+                            <div id="enemyViewAbilities">
+                                <!-- Habilidades serão carregadas dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6>Notas Adicionais</h6>
+                            <p id="enemyViewNotes" class="text-muted"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="editEnemy()">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Templates -->
+<template id="statFieldTemplate">
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control bg-dark text-light border-secondary" 
+                   placeholder="Nome da Estatística">
+            <input type="number" class="form-control bg-dark text-light border-secondary" 
+                   placeholder="Valor">
+            <button class="btn btn-outline-danger" type="button" onclick="removeStat(this)">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</template>
+
+<template id="abilityTemplate">
+    <div class="card bg-dark border-secondary mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Nome da Habilidade</label>
+                <input type="text" class="form-control bg-dark text-light border-secondary">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <textarea class="form-control bg-dark text-light border-secondary" rows="2"></textarea>
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeAbility(this)">
+                <i class="fas fa-trash me-2"></i>Remover
+            </button>
+        </div>
+    </div>
+</template>
+
+<template id="statViewTemplate">
+    <div class="col-6 col-md-4">
+        <div class="border border-secondary rounded p-2 text-center">
+            <small class="d-block text-muted"></small>
+            <strong class="h5"></strong>
+        </div>
+    </div>
+</template>
+
+<template id="abilityViewTemplate">
+    <div class="card bg-dark border-secondary mb-2">
+        <div class="card-body">
+            <h6 class="card-title"></h6>
+            <p class="card-text text-muted"></p>
+        </div>
+    </div>
+</template> 

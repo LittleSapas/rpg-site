@@ -1,0 +1,119 @@
+<!-- Modal de Gerenciamento de Membros -->
+<div class="modal fade" id="membersModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Gerenciar Membros</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Abas -->
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active bg-dark text-light border-secondary" 
+                                data-bs-toggle="tab" data-bs-target="#currentMembers" type="button">
+                            Membros Atuais
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link bg-dark text-light border-secondary" 
+                                data-bs-toggle="tab" data-bs-target="#addMembers" type="button">
+                            Adicionar Membros
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Conteúdo das Abas -->
+                <div class="tab-content">
+                    <!-- Membros Atuais -->
+                    <div class="tab-pane fade show active" id="currentMembers">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Membro</th>
+                                        <th>Função</th>
+                                        <th>Personagens</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="membersList">
+                                    <!-- Lista de membros será carregada dinamicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Adicionar Membros -->
+                    <div class="tab-pane fade" id="addMembers">
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="memberSearch" placeholder="Buscar membros do servidor...">
+                                <button class="btn btn-outline-secondary" type="button" onclick="searchMembers()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="searchResults" class="border border-secondary rounded p-3">
+                            <!-- Resultados da busca serão carregados dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template para Membro -->
+<template id="memberTemplate">
+    <tr>
+        <td>
+            <div class="d-flex align-items-center">
+                <img src="" alt="" class="rounded-circle me-2" width="32" height="32">
+                <div>
+                    <div class="fw-bold"></div>
+                    <small class="text-muted"></small>
+                </div>
+            </div>
+        </td>
+        <td>
+            <select class="form-select form-select-sm bg-dark text-light border-secondary">
+                <option value="player">Jogador</option>
+                <option value="master">Mestre</option>
+            </select>
+        </td>
+        <td>
+            <span class="badge bg-primary"></span>
+        </td>
+        <td>
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-outline-primary" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-outline-danger" title="Remover">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>
+</template>
+
+<!-- Template para Resultado da Busca -->
+<template id="searchResultTemplate">
+    <div class="d-flex align-items-center justify-content-between p-2 border-bottom border-secondary">
+        <div class="d-flex align-items-center">
+            <img src="" alt="" class="rounded-circle me-2" width="32" height="32">
+            <div>
+                <div class="fw-bold"></div>
+                <small class="text-muted"></small>
+            </div>
+        </div>
+        <button type="button" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-plus me-1"></i>Adicionar
+        </button>
+    </div>
+</template> 

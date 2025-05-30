@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}RPG Manager - Sua Biblioteca de RPG{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center min-vh-75">
+        <div class="col-lg-6">
+            <h1 class="display-4 mb-4">Gerencie suas campanhas de RPG com facilidade</h1>
+            <p class="lead mb-4">
+                Organize suas campanhas, crie fichas personalizadas, acompanhe as alterações em tempo real e muito mais.
+                Tudo integrado com o Discord!
+            </p>
+            {% if not current_user.is_authenticated %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="fab fa-discord me-2"></i> Começar agora
+                </a>
+                <a href="#recursos" class="btn btn-outline-light btn-lg px-4">Saiba mais</a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ url_for('campaigns.list_campaigns') }}" class="btn btn-primary btn-lg px-4 me-md-2">
+                    <i class="fas fa-dice-d20 me-2"></i> Minhas Campanhas
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6 d-none d-lg-block">
+            <img src="{{ url_for('static', filename='img/hero.png') }}" alt="RPG Manager" class="img-fluid">
+        </div>
+    </div>
+
+    <section id="recursos" class="py-5">
+        <h2 class="text-center mb-5">Recursos Principais</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                        <h3 class="card-title h4">Integração com Discord</h3>
+                        <p class="card-text">Conecte-se com sua conta do Discord e gerencie campanhas diretamente dos seus servidores.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file-alt fa-3x mb-3 text-primary"></i>
+                        <h3 class="card-title h4">Fichas Personalizáveis</h3>
+                        <p class="card-text">Crie templates de fichas com campos personalizados para qualquer sistema de RPG.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sync fa-3x mb-3 text-primary"></i>
+                        <h3 class="card-title h4">Atualizações em Tempo Real</h3>
+                        <p class="card-text">Acompanhe alterações nas fichas e interaja com os jogadores em tempo real.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="mb-4">Por que usar o RPG Manager?</h2>
+                <ul class="list-unstyled">
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Interface intuitiva e responsiva
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Organização eficiente de campanhas
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Sistema de notas e anotações
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Gerenciamento de NPCs e inimigos
+                    </li>
+                    <li class="mb-3">
+                        <i class="fas fa-check text-success me-2"></i>
+                        Sessões virtuais interativas
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6">
+                <img src="{{ url_for('static', filename='img/features.png') }}" alt="Recursos" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if current_user.is_authenticated %}
+<script>
+// Carregar servidores do Discord
+async function loadDiscordServers() {
+    try {
+        const response = await fetch('/api/discord/servers');
+        const servers = await response.json();
+        
+        const container = document.getElementById('discord-servers');
+        container.innerHTML = ''; // Limpar loading spinner
+        
+        servers.forEach(server => {
+            const serverCard = document.createElement('div');
+            serverCard.className = 'col-md-4';
+            serverCard.innerHTML = `
+                <div class="rpg-card p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="${server.icon_url}" alt="${server.name}" class="rounded-circle me-3" style="width: 48px; height: 48px;">
+                        <h4 class="mb-0">${server.name}</h4>
+                    </div>
+                    <p class="text-muted">${server.member_count} membros</p>
+                    <a href="/campaigns/${server.id}" class="btn btn-rpg">Ver Campanhas</a>
+                </div>
+            `;
+            container.appendChild(serverCard);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar servidores:', error);
+        document.getElementById('discord-servers').innerHTML = `
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    Erro ao carregar servidores. Por favor, tente novamente mais tarde.
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Carregar servidores quando a página carregar
+document.addEventListener('DOMContentLoaded', loadDiscordServers);
+</script>
+{% endif %}
+{% endblock %} 

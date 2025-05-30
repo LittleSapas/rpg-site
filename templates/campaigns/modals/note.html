@@ -1,0 +1,137 @@
+<!-- Modal de Anotação -->
+<div class="modal fade" id="noteModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="noteModalTitle">Nova Anotação</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="noteForm">
+                    <input type="hidden" id="noteId">
+                    
+                    <div class="mb-3">
+                        <label for="noteTitle" class="form-label">Título</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="noteTitle" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="noteCategory" class="form-label">Categoria</label>
+                        <div class="input-group">
+                            <select class="form-select bg-dark text-light border-secondary" id="noteCategory">
+                                <option value="">Selecione uma categoria...</option>
+                                <!-- Categorias serão carregadas dinamicamente -->
+                            </select>
+                            <button class="btn btn-outline-secondary" type="button" onclick="addCategory()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="noteContent" class="form-label">Conteúdo</label>
+                        <div id="noteContent"></div>
+                        <small class="text-muted">
+                            Use Markdown para formatar o texto. Você pode incluir tabelas, listas e outros elementos.
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label d-block">Anexos</label>
+                        <div class="dropzone bg-dark border border-secondary rounded p-3" id="noteAttachments">
+                            <div class="dz-message">
+                                Arraste arquivos aqui ou clique para fazer upload
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveNote()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Visualização -->
+<div class="modal fade" id="noteViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <div>
+                    <h5 class="modal-title" id="noteViewTitle"></h5>
+                    <small class="text-muted" id="noteViewCategory"></small>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="noteViewContent" class="markdown-body"></div>
+                
+                <div id="noteViewAttachments" class="mt-4">
+                    <h6>Anexos</h6>
+                    <div class="row g-2" id="noteAttachmentsList">
+                        <!-- Lista de anexos será carregada dinamicamente -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" onclick="editNote()">
+                    <i class="fas fa-edit me-2"></i>Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Nova Categoria -->
+<div class="modal fade" id="categoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Nova Categoria</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="categoryName" class="form-label">Nome da Categoria</label>
+                    <input type="text" class="form-control bg-dark text-light border-secondary" 
+                           id="categoryName" required>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveCategory()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template para Card de Anexo -->
+<template id="noteAttachmentTemplate">
+    <div class="col-md-4">
+        <div class="card bg-dark border-secondary h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file fa-2x me-2"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="card-title mb-0 text-truncate"></h6>
+                        <small class="text-muted"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-dark border-secondary">
+                <div class="btn-group btn-group-sm w-100">
+                    <button type="button" class="btn btn-outline-primary" title="Download">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template> 

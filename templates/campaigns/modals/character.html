@@ -1,0 +1,135 @@
+<!-- Modal de Personagem -->
+<div class="modal fade" id="characterModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="characterModalTitle">Novo Personagem</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="characterForm">
+                    <input type="hidden" id="characterId">
+                    
+                    <!-- Informações Básicas -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="text-center mb-3">
+                                <img id="characterImage" src="/static/img/default_character.png" 
+                                     alt="Imagem do Personagem" class="img-fluid rounded mb-2" 
+                                     style="max-height: 200px;">
+                                <div class="d-grid">
+                                    <label class="btn btn-outline-primary">
+                                        <i class="fas fa-upload me-2"></i>Alterar Imagem
+                                        <input type="file" id="imageUpload" accept="image/*" class="d-none">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="characterName" class="form-label">Nome do Personagem</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="characterName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="characterDescription" class="form-label">Descrição</label>
+                                <textarea class="form-control bg-dark text-light border-secondary" 
+                                          id="characterDescription" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos Dinâmicos -->
+                    <div id="dynamicFields">
+                        <!-- Os campos serão carregados dinamicamente baseados no template -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveCharacter()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Templates para Campos Dinâmicos -->
+<template id="textFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <input type="text" class="form-control bg-dark text-light border-secondary">
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="numberFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <input type="number" class="form-control bg-dark text-light border-secondary">
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="textareaFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <textarea class="form-control bg-dark text-light border-secondary" rows="3"></textarea>
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="selectFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <select class="form-select bg-dark text-light border-secondary"></select>
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="checkboxFieldTemplate">
+    <div class="mb-3">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input bg-dark border-secondary">
+            <label class="form-check-label"></label>
+        </div>
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="imageFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <div class="input-group">
+            <input type="file" class="form-control bg-dark text-light border-secondary" accept="image/*">
+            <button class="btn btn-outline-secondary" type="button">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="form-text text-muted"></div>
+    </div>
+</template>
+
+<template id="calculatedFieldTemplate">
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <input type="text" class="form-control bg-dark text-light border-secondary" readonly>
+        <div class="form-text text-muted">
+            <i class="fas fa-calculator me-1"></i>Campo calculado automaticamente
+        </div>
+    </div>
+</template>
+
+<!-- Modal de Visualização de Imagem -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title">Visualizar Imagem</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="previewImage" src="" alt="Preview" class="img-fluid">
+            </div>
+        </div>
+    </div>
+</div> 
