@@ -10,7 +10,8 @@ def init_db(app):
     
     # Importar modelos para que o Flask-Migrate os detecte
     from .combat import Combat, Initiative
-    from .character import Character, CharacterLog
+    from .character import Character
+    from .character_log import CharacterLog
     from .campaign import Campaign, SystemInfo
     from .enemy import Enemy
     from .note import Note
