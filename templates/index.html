@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}RPG Manager - Sua Biblioteca de RPG{% endblock %}
+{% block title %}Null's Swamp - Sua Biblioteca de RPG{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row align-items-center min-vh-75">
         <div class="col-lg-6">
-            <h1 class="display-4 mb-4">Gerencie suas campanhas de RPG com facilidade</h1>
+            <h1 class="display-4 mb-4">Bem-vindo ao Null's Swamp</h1>
             <p class="lead mb-4">
-                Organize suas campanhas, crie fichas personalizadas, acompanhe as alterações em tempo real e muito mais.
+                Gerencie suas campanhas de RPG, crie fichas personalizadas, acompanhe as alterações em tempo real e muito mais.
                 Tudo integrado com o Discord!
             </p>
             {% if not current_user.is_authenticated %}
@@ -27,7 +27,7 @@
             {% endif %}
         </div>
         <div class="col-lg-6 d-none d-lg-block">
-            <img src="{{ url_for('static', filename='img/hero.png') }}" alt="RPG Manager" class="img-fluid">
+            <img src="{{ url_for('static', filename='img/hero.webp') }}" alt="Null's Swamp" class="img-fluid rounded shadow">
         </div>
     </div>
 
@@ -67,7 +67,7 @@
     <section class="py-5">
         <div class="row align-items-center">
             <div class="col-lg-6">
-                <h2 class="mb-4">Por que usar o RPG Manager?</h2>
+                <h2 class="mb-4">Por que usar o Null's Swamp?</h2>
                 <ul class="list-unstyled">
                     <li class="mb-3">
                         <i class="fas fa-check text-success me-2"></i>
@@ -92,7 +92,7 @@
                 </ul>
             </div>
             <div class="col-lg-6">
-                <img src="{{ url_for('static', filename='img/features.png') }}" alt="Recursos" class="img-fluid rounded shadow">
+                <img src="{{ url_for('static', filename='img/features.webp') }}" alt="Recursos" class="img-fluid rounded shadow">
             </div>
         </div>
     </section>
