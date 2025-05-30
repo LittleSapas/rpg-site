@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 from config import Config
-from models import init_db, db, User
+from models import init_db, db, User, Campaign, SystemInfo, Character, CharacterLog
 from monitoring import setup_monitoring
 
 load_dotenv()
@@ -20,38 +20,6 @@ login_manager.login_view = 'auth.login'
 
 # Configurar monitoramento
 setup_monitoring(app)
-
-# Modelos
-class Campaign(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    server_id = db.Column(db.String(120), nullable=False)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    system_info = db.relationship('SystemInfo', backref='campaign', lazy=True)
-    characters = db.relationship('Character', backref='campaign', lazy=True)
-
-class SystemInfo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    campaign_id = db.Column(db.Integer, db.ForeignKey('campaign.id'), nullable=False)
-    title = db.Column(db.String(120), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-
-class Character(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    campaign_id = db.Column(db.Integer, db.ForeignKey('campaign.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    character_data = db.Column(db.JSON)
-    image_url = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class CharacterLog(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    change_description = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    is_master = db.Column(db.Boolean, default=False)
 
 @login_manager.user_loader
 def load_user(user_id):
