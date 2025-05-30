@@ -14,6 +14,7 @@ from .enemy import Enemy
 from .session import Session
 from .combat import Combat, Initiative
 from .template import CharacterTemplate
+from .note import Note
 
 def init_db(app):
     db.init_app(app)
@@ -36,7 +37,8 @@ __all__ = [
     'Session',
     'Combat',
     'Initiative',
-    'CharacterTemplate'
+    'CharacterTemplate',
+    'Note'
 ]
 
 # Garantir que os modelos estejam disponíveis no namespace do módulo
